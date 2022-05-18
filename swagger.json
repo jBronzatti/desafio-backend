@@ -1,0 +1,309 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Central Reservation System API Documentation",
+        "version": "1.0.0",
+        "title": "Central Reservation System (CRS) API",
+        "contact": {
+            "email": "joaovictorbronzatti@gmail.com"
+        }
+    },
+    "schemes": ["http"],
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths" : {
+        "/todos" : {
+            "get" : {
+                "summary" : "Get reservations",
+                "description": "Get all the reservations or filter reservations by check in and check out dates",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "filterInterface",
+                        "description": "JSON Date filter in yyyy/mm/dd format",
+                        "required": false,
+                        "schema": {
+                            "type": "Object",
+                            "properties": {
+                                "CheckInDate" : {
+                                    "type": "string",
+                                    "$ref": "#/definitions/Date"
+                                },
+                                "CheckOutDate" : {
+                                    "type": "JSON",
+                                    "$ref": "#/definitions/Date"
+                                } 
+                            }
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "skip",
+                        "description": "The number of items to skip before start to collect the results (default as 0)",
+                        "required": false,
+                        "type":"integer",
+                        "default":0
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "description": "The number of items to be collected (default as 10)",
+                        "required": false,
+                        "type":"integer",
+                        "default":10
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error in consulting the service",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/todo" : {
+            "post" : {
+                "summary" : "Create a reservation",
+                "description": "Create a reservation",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "Reservation",
+                        "description": "Reservation object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "Reservation" : {
+                                    "type": "object",
+                                    "$ref": "#/definitions/todosReservation"
+                                } 
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/todosResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Unable to create the reservation",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/todos/{id}" : {
+            "put" : {
+                "summary" : "Update Reservation",
+                "description": "Update Reservation",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation id that needs to be changed",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Reservation",
+                        "description": "Reservation object",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "task" : {
+                                    "type": "object",
+                                    "$ref": "#/definitions/todosResponse"
+                                } 
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    },
+                    "304": {
+                        "description": "Reservation was not updated",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/todo/{id}" : {
+            "delete" : {
+                "summary" : "Delete a Reservation",
+                "description": "Delete a Reservation",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation id that needs to be deleted",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Can't find reservation",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Can't find reservation",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "definitions": {
+        "todosResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                     "type": "string"
+                },
+                "ApartmentName": {
+                    "type": "string"
+                },
+                "checkInDate": {
+                    "type": "string"
+                },
+                "checkOutDate": {
+                    "type": "string"
+                },
+                "guestsQuantity": {
+                    "type": "integer",
+                    "minimum": 1
+               },
+               "guestsNames": {
+                "type": "array",
+                "minItems":1,
+                "items":{
+                    "type":"string"
+                    }
+                },
+                "guestsEmails": {
+                    "type": "array",
+                    "minItems":1,
+                    "items":{
+                        "type":"string"
+                    }
+                }
+            }
+        },
+        "todosReservation": {
+            "type": "object",
+            "properties": {
+                "ApartmentName": {
+                    "type": "string"
+                },
+                "checkInDate": {
+                    "type": "string"
+                },
+                "checkOutDate": {
+                    "type": "string"
+                },
+                "guestsQuantity": {
+                    "type": "integer",
+                    "minimum": 1
+               },
+               "guestsNames": {
+                "type": "array",
+                "minItems":1,
+                "items":{
+                    "type":"string"
+                    }
+                },
+                "guestsEmails": {
+                    "type": "array",
+                    "minItems":1,
+                    "items":{
+                        "type":"string"
+                    }
+                }
+            }
+        },
+        "Date": {
+            "type": "string",
+            "properties": {
+                "CheckInDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "yyyy/mm/dd"
+                },
+                "CheckOutDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "yyyy/mm/dd"
+                }
+            }
+        },
+        "InvalidResponse": {
+            "type": "object",
+            "properties": {
+                "statusCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+
+        }
+    }
+}
+
