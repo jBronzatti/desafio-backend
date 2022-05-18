@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: main
+      MONGO_INITDB_ROOT_PASSWORD: main123
+    ports:
+      - "27017:27017"
